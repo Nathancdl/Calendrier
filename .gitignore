@@ -3,3 +3,7 @@ dist
 .DS_Store
 *.local
 .vercel
+
+# Exports de conversations privées posés à la racine : ne jamais les publier.
+/*.html
+!/index.html
