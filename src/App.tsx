@@ -3,10 +3,10 @@ import { Countdown, NextDoorTimer } from './components/Countdown'
 import { Door, type DoorState } from './components/Door'
 import { GiftDialog } from './components/GiftDialog'
 import { Snow } from './components/Snow'
-import { FOOTER, RECIPIENT, YEAR } from './config'
+import { CALENDAR_NAME, FOOTER, RECIPIENT, YEAR } from './config'
 import { GIFTS, type Gift } from './gifts'
 import { DAYS, formatDay, unlockTime, unlockedCount, useNow } from './time'
-import { useOpenedDoors } from './useOpenedDoors'
+import { useOpenedDoors, usePlayedGames } from './useOpenedDoors'
 
 const giftsByDay = new Map(GIFTS.map((gift) => [gift.day, gift]))
 const giftFor = (day: number): Gift => giftsByDay.get(day) ?? { day, emoji: '🎁', title: 'Surprise', message: '' }
@@ -20,6 +20,7 @@ export default function App() {
   const now = useNow()
   const unlocked = unlockedCount(now)
   const [opened, openDoor] = useOpenedDoors()
+  const [playedGames, markGamePlayed] = usePlayedGames()
   const [activeDay, setActiveDay] = useState<number | null>(null)
   const [toast, setToast] = useState<Toast | null>(null)
   const revealTimer = useRef<number | undefined>(undefined)
@@ -35,7 +36,7 @@ export default function App() {
   const handlePress = useCallback(
     (day: number, state: DoorState) => {
       if (state === 'locked') {
-        setToast({ id: Date.now(), text: `Patience… la porte ${day} s’ouvre le ${formatDay(day)}.` })
+        setToast({ id: Date.now(), text: `Au panier ! La porte ${day} s’ouvre le ${formatDay(day)}.` })
         return
       }
       window.clearTimeout(revealTimer.current)
@@ -60,7 +61,9 @@ export default function App() {
 
       <div className="page">
         <header className="intro">
-          <p className="eyebrow">Calendrier de l’Avent · {YEAR}</p>
+          <p className="eyebrow">
+            {CALENDAR_NAME} · {YEAR}
+          </p>
           <h1 className="intro__title">
             Pour toi, <em>{RECIPIENT}</em>
           </h1>
@@ -84,7 +87,8 @@ export default function App() {
               </p>
               {unlocked < 24 && (
                 <p className="status__next">
-                  Prochaine porte dans <NextDoorTimer target={unlockTime(unlocked + 1)} now={now} />
+                  Encore un dodo : prochaine porte dans{' '}
+                  <NextDoorTimer target={unlockTime(unlocked + 1)} now={now} />
                 </p>
               )}
               <div className="progress">
@@ -126,7 +130,13 @@ export default function App() {
         {toast && <p key={toast.id}>{toast.text}</p>}
       </div>
 
-      <GiftDialog gift={activeDay === null ? null : giftFor(activeDay)} onClose={() => setActiveDay(null)} />
+      <GiftDialog
+        gift={activeDay === null ? null : giftFor(activeDay)}
+        gamePlayed={activeDay !== null && playedGames.has(activeDay)}
+        openedDays={opened}
+        onGameDone={markGamePlayed}
+        onClose={() => setActiveDay(null)}
+      />
     </>
   )
 }

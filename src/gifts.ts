@@ -1,3 +1,13 @@
+/**
+ * Mini-jeux disponibles :
+ * 'scratch' carte à gratter · 'memory' paires de chaussettes · 'catch' attrape les bo bun · 'penalty' tirs au but ·
+ * 'tree' le sapin des 24 jours (le final : on y accroche les souvenirs de tout le mois) ·
+ * 'flags' red flag ou green flag · 'quiz' le quiz sur vous deux ·
+ * 'story' votre histoire rejouée en messages (l'ouverture du calendrier).
+ * Les cartes et les questions se modifient dans src/games/ChoiceGame.tsx, les messages dans src/games/StoryGame.tsx.
+ */
+export type GameId = 'scratch' | 'memory' | 'catch' | 'penalty' | 'tree' | 'flags' | 'quiz' | 'story'
+
 export type Gift = {
   /** Jour de décembre (1 à 24). */
   day: number
@@ -11,6 +21,10 @@ export type Gift = {
   image?: string
   /** Lien facultatif (playlist, réservation, vidéo…). */
   link?: { label: string; url: string }
+  /** Mini-jeu facultatif à réussir avant de voir le cadeau. Retire la ligne pour ouvrir la porte directement. */
+  game?: GameId
+  /** Pour les mots doux : affiche « ⚠️ attention je vais être mims ⚠️ » juste avant le message. */
+  mims?: boolean
 }
 
 /*
@@ -20,16 +34,20 @@ export type Gift = {
 export const GIFTS: Gift[] = [
   {
     day: 1,
-    emoji: '💌',
-    title: 'Une lettre pour commencer',
+    emoji: '🧸',
+    title: 'Bienvenue, bibs',
+    game: 'story',
+    mims: true,
+    // Le cadeau du jour 1 : une peluche Winnie, à poser sur son lit avant son retour du vendredi 4.
     message:
-      'Vingt-quatre jours, vingt-quatre petites attentions.\nJ’avais envie que tu te sentes aimée chaque matin de décembre, pas seulement le 25.\nReviens demain, et tous les jours d’après.',
+      'Tu as envoyé ta teuteute au Père Noël et tu m’as eu.\nMoi, je t’ai préparé vingt-quatre jours de rab : une petite attention chaque matin jusqu’à Noël.\nLa première t’attend déjà : un petit Winnie garde le panier jusqu’à ton retour vendredi.',
   },
   {
     day: 2,
     emoji: '🍫',
     title: 'Ton chocolat préféré',
-    message: 'Parce qu’un mois de décembre sans chocolat, ça n’existe pas.\nViens me le réclamer.',
+    game: 'scratch',
+    message: 'Parce qu’un mois de décembre sans chocolat, ça n’existe pas.\nIl t’attend sagement au panier pour ton retour.',
   },
   {
     day: 3,
@@ -41,29 +59,32 @@ export const GIFTS: Gift[] = [
   },
   {
     day: 4,
-    emoji: '🎬',
-    title: 'Bon pour une soirée film',
-    message: 'Tu choisis le film. Je ne râle pas, promis.\nJe m’occupe du plaid et du pop-corn.',
+    emoji: '🍜',
+    title: 'Bon pour un bo bun de retour',
+    game: 'catch',
+    message:
+      'Tu m’as manqué plus que les bo bun, et c’est dire.\nBon pour un bo bun de retour, ce soir ou quand tu auras récupéré.',
   },
   {
     day: 5,
+    emoji: '🎄',
+    title: 'Une déco pour le sapin',
+    message:
+      'Un petit Winnie à accrocher dans ton sapin.\nOn le pose ensemble, tu me diras où : je ne suis pas un génie de la déco.',
+  },
+  {
+    day: 6,
     emoji: '🥐',
     title: 'Bon pour un petit-déjeuner au lit',
     message: 'Ne bouge pas, je m’occupe de tout.\nValable ce week-end, ou quand tu voudras.',
   },
   {
-    day: 6,
-    emoji: '📸',
-    title: 'Un souvenir de nous',
-    message: 'Une de mes photos préférées de nous deux.\nJ’aimerais en avoir encore mille comme celle-là.',
-    // ✏️ Dépose la photo dans public/photos/ puis retire les deux barres :
-    // image: 'photos/nous-deux.jpg',
-  },
-  {
     day: 7,
     emoji: '🧦',
-    title: 'Des chaussettes de Noël',
-    message: 'Pour avoir chaud jusqu’au bout des orteils tout l’hiver.\nViens les chercher.',
+    title: 'Des chaussettes bien hautes',
+    game: 'memory',
+    message:
+      'Pour avoir chaud jusqu’au bout des orteils tout l’hiver.\nBien hautes : zéro soquette, promis.\nViens les chercher.',
   },
   {
     day: 8,
@@ -73,17 +94,20 @@ export const GIFTS: Gift[] = [
   },
   {
     day: 9,
-    emoji: '🕯️',
-    title: 'Une bougie parfumée',
-    message: 'Pour tes soirées d’hiver.\nAllume-la et pense à moi.',
+    emoji: '📸',
+    title: 'Bon pour un photomaton à deux',
+    message:
+      'Tu avais raison : on n’a aucune photo correcte de nous deux.\nBon pour une séance photomaton, grimaces autorisées.',
   },
   {
     day: 10,
-    emoji: '📝',
-    title: 'Dix choses que j’aime chez toi',
-    // ✏️ À remplacer par tes dix vraies raisons.
+    emoji: '💚',
+    title: 'Tes dix green flags',
+    game: 'flags',
+    mims: true,
+    // Tirés de ce que vous vous êtes écrit : ajuste la liste à ton goût.
     message:
-      'Ton rire.\nTon regard quand tu es heureuse.\nTa façon de prendre soin des autres.\nTa force, même quand tu doutes.\nTes câlins.\nTa voix au réveil.\nTon humour.\nTa curiosité.\nTa tendresse.\nEt tout ce que je n’arrive pas à écrire.',
+      'T’es pleine de vie.\nTes bouclettes.\nTa p’tite tête.\nTon planning de tasses.\nTa mémoire, qui me redébloque des souvenirs.\nTa passion pour le bo bun.\nTes petits plats d’automne.\nTon fou rire quand j’imite Mickey.\nPersonne ne touche à doudou.\nEt le plus beau : ton green flag, c’est d’être un peu red flag.',
   },
   {
     day: 11,
@@ -93,34 +117,39 @@ export const GIFTS: Gift[] = [
   },
   {
     day: 12,
-    emoji: '🎄',
-    title: 'Marché de Noël',
-    message: 'Aujourd’hui, je t’emmène au marché de Noël.\nVin chaud obligatoire.',
+    emoji: '🌊',
+    title: 'L’océan, puis le marché de Noël',
+    game: 'scratch',
+    message:
+      'Aujourd’hui, je t’emmène voir l’océan sans quitter Paris, à l’Atelier des Lumières.\nEt après, marché de Noël : vin chaud obligatoire.',
   },
   {
     day: 13,
-    emoji: '🍪',
-    title: 'Atelier biscuits de Noël',
-    message: 'Cet après-midi, on fait des biscuits de Noël.\nTu décores, je goûte.',
+    emoji: '🎂',
+    title: 'Le gâteau au chocolat d’Adibou',
+    message:
+      'Cet après-midi, on ressort ta recette imprimée de la cuisine d’Adibou.\nTu diriges, je touille, et on se partage le fond du plat.',
   },
   {
     day: 14,
     emoji: '📖',
-    title: 'Un livre choisi pour toi',
-    message: 'Je l’ai choisi en pensant à toi.\nRegarde bien la première page.',
+    title: 'Un roman noir choisi pour toi',
+    message: 'Pour tes soirées thé et pilou pilou.\nJe l’ai choisi en pensant à toi : regarde bien la première page.',
   },
   {
     day: 15,
-    emoji: '🎥',
-    title: 'Un message vidéo',
-    message: 'J’avais quelque chose à te dire, et c’était mieux de vive voix.',
-    // ✏️ Colle le lien de ta vidéo puis retire les deux barres :
-    // link: { label: 'Regarder', url: 'https://…' },
+    emoji: '🌙',
+    title: 'Une histoire du soir',
+    message: 'Tu m’avais écrit « Tu m’as pas lu d’histoire ».\nCe soir, c’est réparé : je te la lis.',
+    // ✏️ Facultatif : si tu enregistres l'histoire, colle le lien de l'audio puis retire les deux barres.
+    // Sans lien, le mot fonctionne quand même : tu la lis en vrai ou au téléphone.
+    // link: { label: 'Écouter', url: 'https://…' },
   },
   {
     day: 16,
     emoji: '🛁',
     title: 'Soirée cocooning',
+    game: 'scratch',
     message: 'Un bain, un masque, un thé.\nCe soir, tu ne t’occupes que de toi.',
   },
   {
@@ -137,15 +166,18 @@ export const GIFTS: Gift[] = [
   },
   {
     day: 19,
-    emoji: '🎟️',
-    title: 'Une sortie surprise',
-    message: 'Garde ta journée, je t’emmène quelque part.\nTout est déjà réservé, et non, je ne dirai rien.',
+    emoji: '⚽',
+    title: 'Bon pour un match du Red Star',
+    game: 'penalty',
+    message:
+      'Toi, moi, les tribunes de Bauer et une barquette de frites.\nÇa fait trop longtemps que ça me chauffe d’y aller, et c’est avec toi que je veux le faire.',
   },
   {
     day: 20,
     emoji: '🖼️',
-    title: 'Notre photo, encadrée',
-    message: 'Notre photo préférée, en vrai, à accrocher où tu veux.\nViens la chercher.',
+    title: 'Nous deux, avant et maintenant',
+    message:
+      'Nous à 17 ans et nous aujourd’hui, dans le même cadre.\nQuatorze ans n’ont pas suffi.\nViens le chercher.',
   },
   {
     day: 21,
@@ -155,22 +187,26 @@ export const GIFTS: Gift[] = [
   },
   {
     day: 22,
-    emoji: '🗺️',
-    title: 'Chasse au trésor',
-    message: 'Un petit cadeau est caché quelque part.\nViens me réclamer le premier indice.',
+    emoji: '🍾',
+    title: 'Champomy et jacuzzi',
+    message:
+      'Tu avais réclamé la suite jacuzzi en Normandie.\nJ’ai fait mieux : j’ai apporté le Champomy.\nUn petit Champomy et au dodo.',
   },
   {
     day: 23,
     emoji: '✉️',
-    title: 'Pour l’année qui vient',
+    title: 'Le chapitre 2',
+    game: 'quiz',
+    mims: true,
     message:
-      'Encore des fous rires, des voyages et des dimanches à ne rien faire.\nEt toi, surtout. Toi, encore.\nC’est tout ce que je nous souhaite.',
+      'Tu m’as demandé où on sera dans douze ans.\nJe ne sais pas où, mais je sais avec qui.\nLe chapitre 1 a mis quatorze ans à s’écrire. Le chapitre 2, je ne le lâche plus.',
   },
   {
     day: 24,
     emoji: '🎁',
     title: 'Ton vrai cadeau',
+    game: 'tree',
     message:
-      'Tu as été patiente pendant vingt-quatre jours.\nTon cadeau t’attend, viens le chercher.\nJoyeux Noël, mon amour.',
+      'Tu as été patiente pendant vingt-quatre jours.\nTon cadeau t’attend : appelle-moi, je te dis où il est.\nJoyeux Noël, mon amour.',
   },
 ]
